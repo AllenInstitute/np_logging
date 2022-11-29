@@ -48,10 +48,11 @@ class ExitHooks(object):
         
         https://stackoverflow.com/a/9741784
     """
-    def __init__(self):
+    def __init__(self, run_orig_hooks=False):
         self.exit_code = self.exception = self.traceback = None
+        self.run_orig_hooks = run_orig_hooks
         self.hook()
-
+        
     def hook(self):
         self._orig_exit = sys.exit
         sys.exit = self.exit
@@ -66,16 +67,18 @@ class ExitHooks(object):
         
     def threading_excepthook(self, args:tuple):
         exc_type, exc, tb, *_ = args # from threading.excepthook
-        # self._orig_threading_excepthook(args)
-        exception_log(exc_type, exc, tb)
+        if self.run_orig_hooks:
+            self._orig_threading_excepthook(args)
+        log_exception(exc_type, exc, tb)
             
     def sys_excepthook(self, exc_type, exc, tb):
         self.exception = exc
-        self.traceback = tb# ''.join(['\n']+traceback.format_exception(type(exc), value=exc, tb=exc.__traceback__))[:-1]
-        # self._orig_sys_excepthook(exc_type, exc, tb)
-        exception_log(exc_type, exc, tb)
+        self.traceback = tb
+        if self.run_orig_hooks:
+            self._orig_sys_excepthook(exc_type, exc, tb)
+        log_exception(exc_type, exc, tb)
 
-def exception_log(exc_type, exc, tb):
+def log_exception(exc_type, exc, tb):
     logging.exception(msg='Exception:', exc_info=exc)
 
 def exit_log(hooks: ExitHooks, email_level: Union[int, None], log_at_exit: bool = True):
