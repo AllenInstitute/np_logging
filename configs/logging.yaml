@@ -1,0 +1,78 @@
+disable_existing_loggers: false
+formatters:
+  detailed:
+    datefmt: "%Y-%m-%d %H:%M:%S"
+    format: "%(asctime)s %(levelname)s %(filename)s Line-%(lineno)d %(threadName)s |
+      %(message)s"
+  log_server:
+    datefmt: "%Y-%m-%d %H:%M:%S"
+    format: "%(asctime)s\\n%(name)s\\n%(levelname)s\\n%(funcName)s
+      (%(filename)s:%(lineno)d)\\n%(message)s"
+  simple:
+    datefmt: "%H:%M"
+    format: "%(asctime)s | %(filename)s: %(message)s"
+  email:
+    datefmt: "%Y-%m-%d %H:%M:%S"
+    format: "%(levelname)s %(filename)s %(message)s"
+handlers:
+  console_handler:
+    class: logging.StreamHandler
+    formatter: simple
+    level: INFO
+    stream: ext://sys.stdout
+  info_file_handler:
+    backupCount: 20
+    class: logging.handlers.RotatingFileHandler
+    encoding: utf8
+    filename: logs/info.log
+    formatter: detailed
+    level: INFO
+    maxBytes: 10485760
+  debug_file_handler:
+    backupCount: 20
+    class: logging.handlers.RotatingFileHandler
+    encoding: utf8
+    filename: logs/debug.log
+    formatter: detailed
+    level: DEBUG
+    maxBytes: 10485760
+  email_handler:
+    class: logging.handlers.SMTPHandler
+    formatter: email
+    fromaddr: rigs@alleninstitute.org
+    level: INFO
+    mailhost: aicas-1.corp.alleninstitute.org
+    subject: np_logging
+    toaddrs:
+      - ben.hardcastle@alleninstitute.org
+  info_socket_handler:
+    class: logging.handlers.SocketHandler
+    formatter: log_server
+    host: eng-mindscope
+    level: INFO
+    port: 9000
+  warning_socket_handler:
+    class: logging.handlers.SocketHandler
+    formatter: log_server
+    host: eng-mindscope
+    level: WARNING
+    port: 9000
+loggers:
+  web:
+    handlers:
+      - info_socket_handler
+    level: INFO
+    propagate: true
+  email:
+    handlers:
+      - email_handler
+    level: INFO
+    propagate: false
+  root:
+    handlers:
+      - console_handler
+      - info_file_handler
+      - debug_file_handler
+    level: INFO
+    propagate: false
+version: 1
