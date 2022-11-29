@@ -6,10 +6,10 @@ import logging.handlers
 import os
 import pathlib
 import platform
+import subprocess
 import sys
 import threading
-import traceback
-from typing import Union
+from typing import Dict, List, Union
 
 from .config import DEFAULT_ZK_LOGGING_CONFIG_PATH, fetch_zk_config
 
@@ -32,14 +32,47 @@ def setup_record_factory(project_name):
         return record
     
     logging.setLogRecordFactory(record_factory)
-    
-def ensure_file_handler_paths_exist(config):
-    for handler in config['handlers'].values():
+
+def host_responsive(host: str) -> bool:
+    """
+    Remember that a host may not respond to a ping (ICMP) request even if the host name
+    is valid. https://stackoverflow.com/a/32684938
+    """
+    param = '-n' if platform.system().lower()=='windows' else '-c'
+    command = ['ping', param, '1', host]
+    return subprocess.call(command, stdout=subprocess.PIPE) == 0
+
+def ensure_accessible_file_handlers(config: Dict) -> Union[None, List[str]]:
+    """
+    Check filepaths and write access for file handlers; server availability for socket/smtp handlers.
+    Remove inaccessible handlers from config and return their names.
+    """
+    removed_handlers = []
+    for name, handler in config['handlers'].items():
         if 'filename' in handler:
             file = pathlib.Path(handler['filename']).resolve()
-            file.parent.mkdir(parents=True, exist_ok=True)
             if not file.suffix:
                 handler['filename'] = str(file.with_suffix('.log'))
+            try:
+                file.parent.mkdir(parents=True, exist_ok=True)
+                if not os.access(file.parent, os.W_OK): # check write access
+                    raise PermissionError
+            except PermissionError:
+                removed_handlers.append(name)
+        
+        if any(
+            host in handler and not host_responsive(handler[host])
+            for host in ('host', 'mailhost')
+        ):
+            removed_handlers.append(name)     
+                      
+    for handler in removed_handlers:
+        del config['handlers'][handler] 
+        for logger in config['loggers'].values():
+            if handler in logger['handlers']:
+                logger['handlers'].remove(handler)
+                
+    return removed_handlers or None
                 
 def elapsed_time() -> str:
     return "%s [h:m:s.μs]" % (datetime.datetime.now() - START_TIME)
@@ -119,11 +152,14 @@ def setup(
     ):
     "Log handler setup from aibspi/mpeconfig."
     
-    ensure_file_handler_paths_exist(config)
+    removed_handlers = ensure_accessible_file_handlers(config)
     
     setup_record_factory(project_name)
     
     logging.config.dictConfig(config)
+    
+    if removed_handlers:
+        logging.info('Removed handler(s) with inaccessible filepath or server: %s' % removed_handlers)
     
     if email_at_exit is True:
         email_at_exit = logging.INFO
