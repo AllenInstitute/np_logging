@@ -16,7 +16,7 @@ from .config import DEFAULT_ZK_LOGGING_CONFIG_PATH, fetch_zk_config
 START_TIME = datetime.datetime.now()
 EMAIL_HANDLER_NAME = 'email'
 
-def setup_record_factory(project_name):
+def setup_record_factory(project_name: str):
     "Make log records compatible with eng-mindscope log server."
     log_factory = logging.getLogRecordFactory()
 
@@ -115,7 +115,7 @@ class ExitHooks(object):
 def log_exception(exc_type, exc, tb):
     logging.exception(msg='Exception:', exc_info=exc)
 
-def exit_log(hooks: ExitHooks, email_level: Union[int, None], log_at_exit: bool = True):
+def log_exit(hooks: ExitHooks, email_level: Union[int, None], log_at_exit: bool = True):
     
     elapsed = elapsed_time()
     
@@ -139,18 +139,24 @@ def exit_log(hooks: ExitHooks, email_level: Union[int, None], log_at_exit: bool 
 def setup_logging_at_exit(*args, **kwargs):
     hooks = ExitHooks()
     try:
-        atexit.unregister(exit_log)
+        atexit.unregister(log_exit)
     except UnboundLocalError:
         pass
-    atexit.register(exit_log, hooks, *args, **kwargs)
+    atexit.register(log_exit, hooks, *args, **kwargs)
     
 def setup(
-    config: dict = fetch_zk_config(DEFAULT_ZK_LOGGING_CONFIG_PATH),
-    project_name: str = pathlib.Path.cwd().name, #reqd for log server
+    config: Dict = fetch_zk_config(DEFAULT_ZK_LOGGING_CONFIG_PATH),
+    project_name: str = pathlib.Path.cwd().name, # for log server
     email_at_exit: Union[bool, int] = False,
     log_at_exit: bool = True,
     ):
-    "Log handler setup from aibspi/mpeconfig."
+    """
+    Log handler setup from aibspi/mpeconfig. 
+    
+    `email_at_exit` can also be used to set the logging level used at exit: 
+    when the program terminates, a message will be logged at the `logging.INFO`
+    level. An email will only be sent if `logging.INFO >= email_at_exit`.
+    """
     
     removed_handlers = ensure_accessible_file_handlers(config)
     
