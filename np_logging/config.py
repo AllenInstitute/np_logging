@@ -1,11 +1,14 @@
+import functools
+
 import yaml
 from kazoo.client import KazooClient
+
+DEFAULT_ZK_LOGGING_CONFIG_PATH = '/np_defaults/logging'
 
 # preserve order of keys in dict ?
 yaml.add_representer(dict, lambda self, data: yaml.representer.SafeRepresenter.represent_dict(self, data.items()))
 
-DEFAULT_ZK_LOGGING_CONFIG_PATH = '/np_defaults/logging'
-
+@functools.lru_cache(maxsize=None)
 def fetch_zk_config(path: str = DEFAULT_ZK_LOGGING_CONFIG_PATH) -> dict:
     "Access eng-mindscope Zookeeper, return config dict."
     with ConfigServer() as zk:
