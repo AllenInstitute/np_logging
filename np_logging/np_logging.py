@@ -23,8 +23,9 @@ def setup_record_factory(project_name):
     def record_factory(*args, **kwargs):
         record = log_factory(*args, **kwargs)
         record.project = project_name
-        record.comp_id = os.getenv("aibs_comp_id", platform.node())
-        record.rig_name = os.getenv("aibs_rig_id", None)
+        record.comp_id = os.getenv("aibs_comp_id", None)
+        record.hostname = platform.node()
+        record.rig_name = record.hostname
         record.version = None
         # if type(record.msg) is str:
         #     record.msg = record.msg if record.msg and record.msg[-1] == ',' else record.msg + ','

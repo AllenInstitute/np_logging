@@ -1,21 +1,24 @@
 {
   "disable_existing_loggers": false,
   "formatters": {
+    "simple": {
+      "datefmt": "%H:%M",
+      "format": "%(asctime)s | %(message)s"
+    },
     "detailed": {
       "datefmt": "%Y-%m-%d %H:%M:%S",
       "format": "%(asctime)s %(levelname)s %(filename)s Line-%(lineno)d %(threadName)s | %(message)s"
     },
     "log_server": {
       "datefmt": "%Y-%m-%d %H:%M:%S",
-      "format": "%(asctime)s\\n%(name)s\\n%(levelname)s\\n%(funcName)s (%(filename)s:%(lineno)d)\\n%(message)s"
+      "format": "%(message)s,"
     },
-    "simple": {
-      "datefmt": "%H:%M",
-      "format": "%(asctime)s | %(filename)s: %(message)s"
+    "log_server_backup": {
+      "datefmt": "%Y-%m-%d %H:%M:%S",
+      "format": "%(asctime)s %(levelname)s %(hostname)s %(project)s| %(message)s"
     },
     "email": {
-      "datefmt": "%Y-%m-%d %H:%M:%S",
-      "format": "%(levelname)s %(filename)s %(message)s"
+      "format": "%(levelname)s %(project)s | %(message)s"
     }
   },
   "handlers": {
@@ -61,28 +64,31 @@
       "level": "INFO",
       "port": 9000
     },
-    "warning_socket_handler": {
-      "class": "logging.handlers.SocketHandler",
-      "formatter": "log_server",
-      "host": "eng-mindscope",
-      "level": "WARNING",
-      "port": 9000
+    "socket_backup_file_handler": {
+      "backupCount": 9999,
+      "class": "logging.handlers.RotatingFileHandler",
+      "encoding": "utf8",
+      "filename": "//allen/programs/mindscope/workgroups/np-exp/log_server/eng-mindscope_backup.log",
+      "formatter": "log_server_backup",
+      "level": "DEBUG",
+      "maxBytes": 10485760
     }
   },
   "loggers": {
-    "web": {
-      "handlers": [
-        "info_socket_handler"
-      ],
-      "level": "INFO",
-      "propagate": true
-    },
     "email": {
       "handlers": [
         "email_handler"
       ],
       "level": "INFO",
       "propagate": false
+    },
+    "web": {
+      "handlers": [
+        "info_socket_handler",
+        "socket_backup_file_handler"
+      ],
+      "level": "INFO",
+      "propagate": true
     },
     "root": {
       "handlers": [
