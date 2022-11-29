@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "np_logging"
-version = "0.1.6"
+version = "0.1.8"
 description = "Pre-configured file, web, and email logging for Mindscope neuropixels projects, repackaging code from AIBS mpeconfig."
 authors = [
     "Ben Hardcastle <ben.hardcastle@alleninstitute.org>",
