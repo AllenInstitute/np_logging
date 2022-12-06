@@ -1,11 +1,11 @@
-disable_existing_loggers: false
+disable_existing_loggers: true
 formatters:
   simple:
     datefmt: "%H:%M"
     format: "%(asctime)s | %(message)s"
   detailed:
     datefmt: "%Y-%m-%d %H:%M:%S"
-    format: "%(asctime)s %(levelname)s %(filename)s Line-%(lineno)d %(threadName)s | %(message)s"
+    format: "%(asctime)s %(name)s %(levelname)s %(filename)s:%(lineno)d %(funcName)s %(threadName)s | %(message)s"
   log_server:
     datefmt: "%Y-%m-%d %H:%M:%S"
     format: "%(message)s,"
@@ -13,7 +13,7 @@ formatters:
     datefmt: "%Y-%m-%d %H:%M:%S"
     format: "%(asctime)s %(levelname)s %(hostname)s %(project)s | %(message)s"
   email:
-    format: "%(levelname)s %(project)s | %(message)s"
+    format: "%(project)s %(levelname)s | %(message)s"
 handlers:
   console_handler:
     class: logging.StreamHandler
@@ -44,7 +44,7 @@ handlers:
     mailhost: aicas-1.corp.alleninstitute.org
     subject: np_logging
     toaddrs:
-      - ben.hardcastle@alleninstitute.org
+      - yourname@alleninstitute.org
   info_socket_handler:
     class: logging.handlers.SocketHandler
     formatter: log_server
@@ -71,11 +71,10 @@ loggers:
       - socket_backup_file_handler
     level: INFO
     propagate: true
-  root:
-    handlers:
-      - console_handler
-      - info_file_handler
-      - debug_file_handler
-    level: DEBUG
-    propagate: false
+root:
+  handlers:
+    - console_handler
+    - info_file_handler
+    - debug_file_handler
+  level: DEBUG
 version: 1
