@@ -11,11 +11,17 @@ import sys
 import threading
 from typing import Dict, List, Union
 
-from .config import DEFAULT_ZK_LOGGING_CONFIG_PATH, fetch_zk_config
+from .config import fetch_zk_config
 
 START_TIME = datetime.datetime.now()
 EMAIL_HANDLER_NAME = 'email'
 
+try:
+    DEFAULT_CONFIG = fetch_zk_config()
+except ConnectionError as exc:
+    print("Could not fetch default logging config from zookeeper.\n\t> provide a config dict to np_logging.setup() to use.", file=sys.stderr)
+    DEFAULT_CONFIG = None
+    
 def setup_record_factory(project_name: str):
     "Make log records compatible with eng-mindscope log server."
     log_factory = logging.getLogRecordFactory()
@@ -145,7 +151,7 @@ def setup_logging_at_exit(*args, **kwargs):
     atexit.register(log_exit, hooks, *args, **kwargs)
     
 def setup(
-    config: Dict = fetch_zk_config(DEFAULT_ZK_LOGGING_CONFIG_PATH),
+    config: Dict = DEFAULT_CONFIG,
     project_name: str = pathlib.Path.cwd().name, # for log server
     email_at_exit: Union[bool, int] = False,
     log_at_exit: bool = True,
