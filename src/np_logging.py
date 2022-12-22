@@ -68,9 +68,14 @@ def setup(
     log_at_exit: bool = True,
 ):
     """
-    Default config: sets up loggers named `web` and `email`, plus console logging
+    With no args, uses default config to set up loggers named `web` and `email`, plus console logging
     and info/debug file handlers on root logger.
-
+    
+    - `config` 
+        - a custom config dict for the logging module
+        - input dict, or path to dict in json/yaml file, or path to dict on
+          zookeeper [http://eng-mindscope:8081](http://eng-mindscope:8081)
+    
     - `project_name`
         - sets the `channel` value for the web logger
         - the web log can be viewed at [http://eng-mindscope:8080](http://eng-mindscope:8080)
