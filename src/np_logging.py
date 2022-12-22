@@ -21,13 +21,13 @@ DEFAULT_ZK_LOGGING_CONFIG_PATH = "/np_defaults/logging"
 DEFAULT_LOGGING_CONFIG_PATH = ROOT_DIR / "configs" / "logging.yaml"
 
 try:
-    DEFAULT_CONFIG = np_config.fetch_zk_config(DEFAULT_ZK_LOGGING_CONFIG_PATH)
+    DEFAULT_LOGGING_CONFIG = np_config.fetch_zk_config(DEFAULT_ZK_LOGGING_CONFIG_PATH)
 except ConnectionError as exc:
     print(
         f"Could not connect to ZooKeeper.\n\t> Using default config file in package: {DEFAULT_LOGGING_CONFIG_PATH}",
         file=sys.stderr,
     )
-    DEFAULT_CONFIG = np_config.fetch_file_config(DEFAULT_LOGGING_CONFIG_PATH)
+    DEFAULT_LOGGING_CONFIG = np_config.fetch_file_config(DEFAULT_LOGGING_CONFIG_PATH)
 
 
 def web(project_name: str = pathlib.Path.cwd().name) -> logging.Logger:
@@ -60,7 +60,7 @@ def email(
 
 
 def setup(
-    config: Union[str, Dict, pathlib.Path] = DEFAULT_CONFIG,
+    config: Union[str, Dict, pathlib.Path] = DEFAULT_LOGGING_CONFIG,
     project_name: str = pathlib.Path.cwd().name,  # for log server
     email_address: Optional[Union[str, Sequence[str]]] = None,
     email_at_exit: Union[bool, int] = False,  # auto-True if address arg provided

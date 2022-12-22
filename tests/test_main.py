@@ -21,7 +21,7 @@ def has_handler(logger: Union[str, logging.Logger], handler_cls: logging.Handler
     return bool(get_handler(logger, handler_cls))
 
 def test_default_config():
-    assert np_logging.DEFAULT_CONFIG
+    assert np_logging.DEFAULT_LOGGING_CONFIG
     
 def test_setup_with_default_config():
     "Minimum expected from default setup: extra loggers and modified record factory."
