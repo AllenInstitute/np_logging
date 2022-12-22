@@ -68,11 +68,25 @@ def setup(
     log_at_exit: bool = True,
 ):
     """
-    Log handler setup from aibspi/mpeconfig.
+    Default config: sets up loggers named `web` and `email`, plus console logging
+    and info/debug file handlers on root logger.
 
-    `email_at_exit` can also be used to set the logging level used at exit:
-    when the program terminates, a message will be logged at the `logging.INFO`
-    level. An email will only be sent if `logging.INFO >= email_at_exit`.
+    - `project_name`
+        - sets the `channel` value for the web logger
+        - the web log can be viewed at [http://eng-mindscope:8080](http://eng-mindscope:8080)
+
+    - `email_address` 
+        - if one or more addresses are supplied, an email is sent at program exit reporting the
+        elapsed time and cause of termination. If an exception was raised, the
+        traceback is included.
+
+    - `log_at_exit`
+        - If `True`, a message is logged when the program terminates, reporting total
+        elapsed time.
+
+    - `email_at_exit` (`True` if `email_address` is not `None`)
+        - If `True`, an email is sent when the program terminates.
+        - If `logging.ERROR`, the email is only sent if the program terminates via an exception.
     """
     config = utils.get_config_dict_from_multi_input(config)
     removed_handlers = utils.ensure_accessible_handlers(config)

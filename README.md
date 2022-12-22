@@ -1,7 +1,7 @@
 **For use on internal Allen Institute network**
 
 Quick start:
-```
+```python
 import logging
 import np_logging
 
@@ -15,7 +15,7 @@ console logging.
 The built-in python `logging` module can then be used as normal.
 
 Usage example:
-```
+```python
 logging.getLogger('web').info('test: web server')
 logging.getLogger('email').info('test: email logger')
 logging.debug('test: root logger')
@@ -30,7 +30,7 @@ ZooKeeper server `eng-mindscope:2181`
 - or more conveniently, via an extension for VSCode such as [gaoliang.visual-zookeeper](https://marketplace.visualstudio.com/items?itemName=gaoliang.visual-zookeeper)
 
 ZooKeeper configs or config files can be used by supplying their path to `setup()`:
-```
+```python
 np_logging.setup(
     '/projects/np_logging_test/defaults/logging'
 )
