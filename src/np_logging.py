@@ -15,27 +15,28 @@ import np_config
 
 import handlers
 import utils
+from config import CONFIG
 
 ROOT_DIR = pathlib.Path(__file__).absolute().parent.parent
 DEFAULT_ZK_LOGGING_CONFIG_PATH = "/np_defaults/logging"
 DEFAULT_LOGGING_CONFIG_PATH = ROOT_DIR / "configs" / "logging.yaml"
 
 try:
-    DEFAULT_LOGGING_CONFIG = np_config.fetch_zk_config(DEFAULT_ZK_LOGGING_CONFIG_PATH)
+    DEFAULT_LOGGING_CONFIG = np_config.from_zk(DEFAULT_ZK_LOGGING_CONFIG_PATH)
 except ConnectionError as exc:
     print(
-        f"Could not connect to ZooKeeper.\n\t> Using default config file in package: {DEFAULT_LOGGING_CONFIG_PATH}",
-        file=sys.stderr,
+        f"Could not connect to ZooKeeper.\n\t> Using default config file in package: {DEFAULT_LOGGING_CONFIG_PATH}"
     )
-    DEFAULT_LOGGING_CONFIG = np_config.fetch_file_config(DEFAULT_LOGGING_CONFIG_PATH)
+    DEFAULT_LOGGING_CONFIG = np_config.from_file(DEFAULT_LOGGING_CONFIG_PATH)
 
 
 def web(project_name: str = pathlib.Path.cwd().name) -> logging.Logger:
     """
     Set up a socket handler to send logs to the eng-mindscope log server.
     """
-    web = logging.getLogger("web")
-    handler = handlers.ServerHandler(project_name, loglevel=logging.INFO)
+    logger = CONFIG["default_server_logger_name"]
+    web = logging.getLogger(logger)
+    handler = handlers.ServerHandler(project_name, level=logging.INFO)
     web.addHandler(handler)
     web.setLevel(logging.INFO)
     return web
@@ -45,12 +46,12 @@ def email(
     address: Union[str, Sequence[str]],
     subject: str = "np_logging",
     exception_only: bool = False,
-    logger: str = "email",
     propagate_to_root: bool = True,
 ) -> logging.Logger:
     """
     Set up an email logger to send an email at program exit.
     """
+    logger = CONFIG["default_exit_email_logger_name"]
     utils.configure_email_logger(address, logger, subject)
     level = logging.ERROR if exception_only else logging.INFO
     utils.setup_logging_at_exit(
@@ -87,7 +88,7 @@ def setup(
         )
 
     exit_email_logger = (
-        config.get("exit_email_logger", None) or utils.DEFAULT_EXIT_EMAIL_LOGGER
+        config.get("exit_email_logger", None) or CONFIG["default_exit_email_logger_name"]
     )
     if email_at_exit is True:
         email_at_exit = logging.INFO

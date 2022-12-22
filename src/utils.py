@@ -14,10 +14,9 @@ from typing import Any, Dict, List, Mapping, Sequence, Union
 import np_config
 
 import handlers
+from config import CONFIG
 
 START_TIME = datetime.datetime.now()
-DEFAULT_EXIT_EMAIL_LOGGER = "email"  # may be overridden by config['exit_email_logger']
-
 
 def host_responsive(host: str) -> bool:
     """
@@ -85,7 +84,7 @@ class ExitHooks(object):
         try:
             self._orig_threading_excepthook = threading.excepthook
             threading.excepthook = self.threading_excepthook
-        except AttributeError: # threading.excepthook is not available in Python <3.8
+        except AttributeError:  # threading.excepthook is not available in Python <3.8
             pass
 
     def exit(self, code=0):
@@ -113,7 +112,7 @@ def log_exception(exc_type, exc, tb):
 def log_exit(
     hooks: ExitHooks,
     email_level: Union[bool, int],
-    email_logger: str = "DEFAULT_EXIT_EMAIL_LOGGER",
+    email_logger: str = CONFIG["default_exit_email_logger_name"],
     root_log_at_exit: bool = True,
 ):
 
@@ -150,8 +149,8 @@ def setup_logging_at_exit(*args, **kwargs):
 
 def configure_email_logger(
     email_address: Union[str, Sequence[str]],
-    logger_name: str = DEFAULT_EXIT_EMAIL_LOGGER,
-    email_subject: str = "np_logging",
+    logger_name: str = CONFIG["default_exit_email_logger_name"],
+    email_subject: str = CONFIG["handlers"][CONFIG["default_exit_email_logger_name"]]["subject"],
 ):
     email_logger = logging.getLogger(logger_name)
     for handler in email_logger.handlers:
@@ -175,7 +174,7 @@ def get_config_dict_from_multi_input(
 ) -> Dict[str, Any]:
     "Differentiate a file path from a ZK path and return corresponding logging config dict, if valid."
 
-    config = np_config.fetch_config(arg)
+    config = np_config.fetch(arg)
     if not valid_logging_config_dict(config):
         raise ValueError(f"Input {arg!r} is not a valid python logging config dict.")
 
