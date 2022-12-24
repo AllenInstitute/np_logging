@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "np_logging"
-version = "0.2.3"
+version = "0.2.4"
 description = "Pre-configured file, web, and email logging for Mindscope neuropixels projects, repackaging code from AIBS mpeconfig."
 authors = [
     "Ben Hardcastle <ben.hardcastle@alleninstitute.org>",
@@ -22,7 +22,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.6"
-np_config = "^0.1"
+np_config = "^0.2.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7"
