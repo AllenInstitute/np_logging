@@ -16,7 +16,7 @@ import platform
 import sys
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
-from config import CONFIG
+from .config import CONFIG
 
 SERVER_BACKUP: Dict[str, Any] = CONFIG["handlers"]["log_server_file_backup"]
 SERVER: Dict[str, Any] = CONFIG["handlers"]["log_server"]

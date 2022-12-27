@@ -13,9 +13,9 @@ from typing import Dict, List, Mapping, Optional, Sequence, Union
 
 import np_config
 
-import handlers
-import utils
-from config import CONFIG
+from . import handlers
+from . import utils
+from .config import CONFIG
 
 ROOT_DIR = pathlib.Path(__file__).absolute().parent.parent
 DEFAULT_ZK_LOGGING_CONFIG_PATH = "/np_defaults/logging"

@@ -13,8 +13,8 @@ from typing import Any, Dict, List, Mapping, Sequence, Union
 
 import np_config
 
-import handlers
-from config import CONFIG
+from . import handlers
+from .config import CONFIG
 
 START_TIME = datetime.datetime.now()
 
