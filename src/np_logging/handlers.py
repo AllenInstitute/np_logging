@@ -72,7 +72,7 @@ class ServerHandler(logging.handlers.SocketHandler):
 
     def __init__(
         self,
-        project_name: str = pathlib.Path.cwd().name if (__name__ == "__main__") else __name__,
+        project_name: str = pathlib.Path.cwd().name,
         host: str = SERVER["host"],
         port: int = SERVER["port"],
         formatter: logging.Formatter = FORMAT[SERVER["formatter"]],
@@ -96,7 +96,7 @@ class EmailHandler(logging.handlers.SMTPHandler):
     def __init__(
         self,
         toaddrs: Union[str, List[str]],
-        project_name: str = pathlib.Path.cwd().name if (__name__ == "__main__") else __name__,
+        project_name: str = pathlib.Path.cwd().name,
         mailhost: Union[str, Tuple[str, int]] = EMAIL["mailhost"],
         fromaddr: str = EMAIL["fromaddr"],
         subject: str = EMAIL["subject"],
