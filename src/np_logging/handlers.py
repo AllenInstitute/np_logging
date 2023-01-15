@@ -7,7 +7,7 @@ Can be specified in logging config dict:
         (): np_logging.handlers.FileHandler
         level: INFO
 """
-
+import contextlib
 import logging
 import logging.handlers
 import os
@@ -16,16 +16,16 @@ import platform
 import sys
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
-from .config import CONFIG
+from .config import PKG_CONFIG
 
-SERVER_BACKUP: Dict[str, Any] = CONFIG["handlers"]["log_server_file_backup"]
-SERVER: Dict[str, Any] = CONFIG["handlers"]["log_server"]
-CONSOLE: Dict[str, Any] = CONFIG["handlers"]["console"]
-FILE: Dict[str, Any] = CONFIG["handlers"]["file"]
-EMAIL: Dict[str, Any] = CONFIG["handlers"]["email"]
+SERVER_BACKUP: Dict[str, Any] = PKG_CONFIG["handlers"]["log_server_file_backup"]
+SERVER: Dict[str, Any] = PKG_CONFIG["handlers"]["log_server"]
+CONSOLE: Dict[str, Any] = PKG_CONFIG["handlers"]["console"]
+FILE: Dict[str, Any] = PKG_CONFIG["handlers"]["file"]
+EMAIL: Dict[str, Any] = PKG_CONFIG["handlers"]["email"]
 
 FORMAT: Dict[str, logging.Formatter] = {
-    k: logging.Formatter(**v) for k, v in CONFIG["formatters"].items()
+    k: logging.Formatter(**v) for k, v in PKG_CONFIG["formatters"].items()
 }
 
 
@@ -62,19 +62,17 @@ class ServerBackupHandler(logging.handlers.RotatingFileHandler):
         self.setFormatter(formatter)
 
     def emit(self, record):
-        try:
+        with contextlib.suppress(OSError)
             super().emit(record)
-        except OSError:
-            return
 
 
 class ServerHandler(logging.handlers.SocketHandler):
 
-    backup: logging.Handler = ServerBackupHandler()
+    backup: logging.Handler
 
     def __init__(
         self,
-        project_name: str = pathlib.Path.cwd().name,
+        project_name: str = pathlib.Path.cwd().name if (__name__ == "__main__") else __name__,
         host: str = SERVER["host"],
         port: int = SERVER["port"],
         formatter: logging.Formatter = FORMAT[SERVER["formatter"]],
@@ -85,17 +83,20 @@ class ServerHandler(logging.handlers.SocketHandler):
         self.setLevel(level)
         self.setFormatter(formatter)
         setup_record_factory(project_name)
-
+        with contextlib.suppress(FileNotFoundError):
+            self.backup = ServerBackupHandler()
+            
     def emit(self, record):
         super().emit(record)
-        self.backup.emit(record)
+        with contextlib.suppress(AttributeError):
+            self.backup.emit(record)
 
 
 class EmailHandler(logging.handlers.SMTPHandler):
     def __init__(
         self,
         toaddrs: Union[str, List[str]],
-        project_name: str = pathlib.Path.cwd().name,
+        project_name: str = pathlib.Path.cwd().name if (__name__ == "__main__") else __name__,
         mailhost: Union[str, Tuple[str, int]] = EMAIL["mailhost"],
         fromaddr: str = EMAIL["fromaddr"],
         subject: str = EMAIL["subject"],

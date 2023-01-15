@@ -3,19 +3,18 @@ handlers:
   email_handler:
     (): np_logging.handlers.EmailHandler
     toaddrs: ben.hardcastle@alleninstitute.org
-    level: INFO
   log_server:
     (): np_logging.handlers.ServerHandler
-    level: INFO
+    loglevel: INFO
   console_handler:
     (): np_logging.handlers.ConsoleHandler
-    level: DEBUG
+    loglevel: DEBUG
   info_file_handler:
     (): np_logging.handlers.FileHandler
-    level: INFO
+    loglevel: INFO
   debug_file_handler:
     (): np_logging.handlers.FileHandler
-    level: DEBUG
+    loglevel: DEBUG
 loggers:
   email:
     handlers:
@@ -27,10 +26,10 @@ loggers:
       - log_server
     level: INFO
     propagate: true
-  root:
-    handlers:
-      - console_handler
-      - info_file_handler
-      - debug_file_handler
-    level: DEBUG
+root:
+  handlers:
+    - console_handler
+    - info_file_handler
+    - debug_file_handler
+  level: DEBUG
 version: 1

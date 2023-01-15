@@ -14,7 +14,7 @@ from typing import Any, Dict, List, Mapping, Sequence, Union
 import np_config
 
 from . import handlers
-from .config import CONFIG
+from .config import PKG_CONFIG, DEFAULT_LOGGING_CONFIG
 
 START_TIME = datetime.datetime.now()
 
@@ -112,7 +112,7 @@ def log_exception(exc_type, exc, tb):
 def log_exit(
     hooks: ExitHooks,
     email_level: Union[bool, int],
-    email_logger: str = CONFIG["default_exit_email_logger_name"],
+    email_logger: str = PKG_CONFIG["default_exit_email_logger_name"],
     root_log_at_exit: bool = True,
 ):
 
@@ -149,8 +149,8 @@ def setup_logging_at_exit(*args, **kwargs):
 
 def configure_email_logger(
     email_address: Union[str, Sequence[str]],
-    logger_name: str = CONFIG["default_exit_email_logger_name"],
-    email_subject: str = CONFIG["handlers"][CONFIG["default_exit_email_logger_name"]]["subject"],
+    logger_name: str = PKG_CONFIG["default_exit_email_logger_name"],
+    email_subject: str = __name__,
 ):
     email_logger = logging.getLogger(logger_name)
     for handler in email_logger.handlers:
@@ -164,7 +164,7 @@ def configure_email_logger(
     else:
         email_logger.addHandler(
             handlers.EmailHandler(
-                email_address, level=logging.INFO, subject=email_subject
+                list(email_address), level=logging.INFO, subject=email_subject
             )
         )
 

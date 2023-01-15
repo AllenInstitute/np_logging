@@ -1,0 +1,60 @@
+default_exit_email_logger_name: email
+default_server_logger_name: web
+formatters:
+  simple:
+    datefmt: "%H:%M"
+    fmt: "%(asctime)s | %(message)s"
+  detailed:
+    datefmt: "%Y-%m-%d %H:%M:%S"
+    fmt: "%(asctime)s %(name)s %(levelname)s %(filename)s:%(lineno)d %(funcName)s %(threadName)s | %(message)s"
+  log_server:
+    datefmt: "%Y-%m-%d %H:%M:%S"
+    fmt: "%(message)s,"
+  log_server_file_backup:
+    datefmt: "%Y-%m-%d %H:%M:%S"
+    fmt: "%(asctime)s %(levelname)s %(hostname)s %(project)s | %(message)s"
+  email:
+    fmt: "%(project)s %(levelname)s | %(message)s"
+handlers:    
+  log_server_file_backup:
+    class: logging.handlers.RotatingFileHandler
+    formatter: detailed
+    level: NOTSET
+    backup_filepath: //allen/programs/mindscope/workgroups/np-exp/log_server/eng-mindscope_backup.log
+    mode: "a"
+    maxBytes: 10485760
+    backupCount: 9999
+    encoding: "utf8"
+    delay: false
+  log_server:
+    class: logging.handlers.SocketHandler
+    formatter: log_server
+    host: eng-mindscope
+    level: INFO
+    port: 9000
+  console:
+    class: logging.StreamHandler
+    formatter: simple
+    level: INFO
+    stream: ext://sys.stdout
+  file:
+    class: logging.handlers.RotatingFileHandler
+    formatter: detailed
+    level: INFO
+    encoding: utf8
+    filename: logs/info.log
+    logs_dir: logs
+    mode: a
+    backupCount: 20
+    maxBytes: 10485760
+    delay: false
+  email:
+    class: logging.handlers.SMTPHandler
+    formatter: email
+    fromaddr: rigs@alleninstitute.org
+    level: INFO
+    mailhost: aicas-1.corp.alleninstitute.org
+    subject: np_logging
+    timeout: 5.0
+    credentials: null
+    secure: null
