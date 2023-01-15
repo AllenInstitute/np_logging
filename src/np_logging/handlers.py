@@ -62,7 +62,7 @@ class ServerBackupHandler(logging.handlers.RotatingFileHandler):
         self.setFormatter(formatter)
 
     def emit(self, record):
-        with contextlib.suppress(OSError)
+        with contextlib.suppress(OSError):
             super().emit(record)
 
 
