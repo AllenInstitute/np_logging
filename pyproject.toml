@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "np_logging"
-version = "0.2.6"
+version = "0.2.7"
 description = "Pre-configured file, web, and email logging for Mindscope neuropixels projects, repackaging code from AIBS mpeconfig."
 authors = [
     "Ben Hardcastle <ben.hardcastle@alleninstitute.org>",
@@ -22,7 +22,7 @@ classifiers = [
 "Bug Tracker" = "https://github.com/alleninstitute/np_logging/issues"
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.7"
 np_config = "^0.2.2"
 
 [tool.poetry.group.dev.dependencies]

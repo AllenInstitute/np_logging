@@ -11,23 +11,9 @@ import sys
 import threading
 from typing import Dict, List, Mapping, Optional, Sequence, Union
 
-import np_config
-
 from . import handlers
 from . import utils
 from .config import CONFIG
-
-ROOT_DIR = pathlib.Path(__file__).absolute().parent.parent
-DEFAULT_ZK_LOGGING_CONFIG_PATH = "/np_defaults/logging"
-DEFAULT_LOGGING_CONFIG_PATH = ROOT_DIR / "configs" / "logging.yaml"
-
-try:
-    DEFAULT_LOGGING_CONFIG = np_config.from_zk(DEFAULT_ZK_LOGGING_CONFIG_PATH)
-except ConnectionError as exc:
-    print(
-        f"Could not connect to ZooKeeper.\n\t> Using default config file in package: {DEFAULT_LOGGING_CONFIG_PATH}"
-    )
-    DEFAULT_LOGGING_CONFIG = np_config.from_file(DEFAULT_LOGGING_CONFIG_PATH)
 
 
 def web(project_name: str = pathlib.Path.cwd().name) -> logging.Logger:
