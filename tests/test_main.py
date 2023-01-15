@@ -7,9 +7,9 @@ from typing import Dict, Optional, Union
 
 import np_config
 import pytest
-
-import np_logging, utils, handlers
-from config import CONFIG
+import np_logging
+from np_logging import utils, handlers
+from np_logging.config import CONFIG
 
 def get_handler(
     logger: Union[str, logging.Logger], handler_cls: logging.Handler
