@@ -67,9 +67,6 @@ class ServerBackupHandler(logging.handlers.RotatingFileHandler):
 
 
 class ServerHandler(logging.handlers.SocketHandler):
-
-    backup: logging.Handler
-
     def __init__(
         self,
         project_name: str = pathlib.Path.cwd().name,
@@ -77,18 +74,21 @@ class ServerHandler(logging.handlers.SocketHandler):
         port: int = SERVER["port"],
         formatter: logging.Formatter = FORMAT[SERVER["formatter"]],
         level: int = SERVER["level"],
+        backup: logging.Handler = None,
         **kwargs,
     ):
         super().__init__(host, port)
         self.setLevel(level)
         self.setFormatter(formatter)
         setup_record_factory(project_name)
-        with contextlib.suppress(FileNotFoundError):
-            self.backup = ServerBackupHandler()
+        if backup is None:
+            with contextlib.suppress(FileNotFoundError):
+                backup = ServerBackupHandler()
+        self.backup = backup
             
     def emit(self, record):
         super().emit(record)
-        with contextlib.suppress(AttributeError):
+        with contextlib.suppress(Exception):
             self.backup.emit(record)
 
 
