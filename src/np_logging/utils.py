@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import atexit
 import datetime
 import logging
@@ -9,7 +11,7 @@ import platform
 import subprocess
 import sys
 import threading
-from typing import Any, Dict, List, Mapping, Sequence, Union
+from typing import Any, Mapping, Sequence, Union
 
 import np_config
 
@@ -28,7 +30,7 @@ def host_responsive(host: str) -> bool:
     return subprocess.call(command, stdout=subprocess.PIPE) == 0
 
 
-def ensure_accessible_handlers(config: Dict) -> Union[None, List[str]]:
+def ensure_accessible_handlers(config: dict) -> Union[None, list[str]]:
     """
     Check filepaths and write access for file handlers; server availability for socket/smtp handlers.
     Remove inaccessible handlers from config and return their names.
@@ -171,7 +173,7 @@ def configure_email_logger(
 
 def get_config_dict_from_multi_input(
     arg: Union[str, Mapping, pathlib.Path]
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     "Differentiate a file path from a ZK path and return corresponding logging config dict, if valid."
 
     config = np_config.fetch(arg)

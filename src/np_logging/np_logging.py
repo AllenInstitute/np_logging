@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import atexit
 import datetime
 import logging
@@ -9,18 +11,28 @@ import platform
 import subprocess
 import sys
 import threading
-from typing import Dict, List, Mapping, Optional, Sequence, Union
+from typing import Mapping, Optional, Sequence, Union
 
 from . import handlers
 from . import utils
 from .config import DEFAULT_LOGGING_CONFIG, PKG_CONFIG
 
 
+def getLogger(name: Optional[str] = None) -> logging.Logger:
+    """`logging.getLogger` with console & debug/warning file handlers"""
+    logger = logging.getLogger(name)
+    logger.addHandler(handlers.FileHandler(level=logging.WARNING))
+    logger.addHandler(handlers.FileHandler(level=logging.DEBUG))
+    logger.addHandler(handlers.ConsoleHandler(level=logging.DEBUG))
+    logger.setLevel(logging.DEBUG)
+    return logger
+
+
 def web(project_name: str = pathlib.Path.cwd().name) -> logging.Logger:
     """
     Set up a socket handler to send logs to the eng-mindscope log server.
     """
-    logger = PKG_CONFIG["default_server_logger_name"]
+    logger = PKG_CONFIG.get("default_server_logger_name", 'web')
     web = logging.getLogger(logger)
     handler = handlers.ServerHandler(project_name, level=logging.INFO)
     web.addHandler(handler)
@@ -37,7 +49,7 @@ def email(
     """
     Set up an email logger to send an email at program exit.
     """
-    logger = PKG_CONFIG["default_exit_email_logger_name"]
+    logger = PKG_CONFIG.get("default_exit_email_logger_name", 'email')
     utils.configure_email_logger(address, logger, subject)
     level = logging.ERROR if exception_only else logging.INFO
     utils.setup_logging_at_exit(
@@ -47,7 +59,7 @@ def email(
 
 
 def setup(
-    config: Union[str, Dict, pathlib.Path] = DEFAULT_LOGGING_CONFIG,
+    config: Union[str, dict, pathlib.Path] = DEFAULT_LOGGING_CONFIG,
     project_name: str = pathlib.Path.cwd().name,  # for log server
     email_address: Optional[Union[str, Sequence[str]]] = None,
     email_at_exit: Union[bool, int] = False,  # auto-True if address arg provided
@@ -93,7 +105,7 @@ def setup(
         )
 
     exit_email_logger = (
-        config.get("exit_email_logger", None) or PKG_CONFIG["default_exit_email_logger_name"]
+        config.get("exit_email_logger", None) or PKG_CONFIG("default_exit_email_logger_name", 'email')
     )
     if email_at_exit is True:
         email_at_exit = logging.INFO

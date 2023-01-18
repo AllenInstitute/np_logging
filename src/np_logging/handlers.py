@@ -7,6 +7,8 @@ Can be specified in logging config dict:
         (): np_logging.handlers.FileHandler
         level: INFO
 """
+from __future__ import annotations
+
 import contextlib
 import logging
 import logging.handlers
@@ -14,17 +16,17 @@ import os
 import pathlib
 import platform
 import sys
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Optional, Union
 
 from .config import PKG_CONFIG
 
-SERVER_BACKUP: Dict[str, Any] = PKG_CONFIG["handlers"]["log_server_file_backup"]
-SERVER: Dict[str, Any] = PKG_CONFIG["handlers"]["log_server"]
-CONSOLE: Dict[str, Any] = PKG_CONFIG["handlers"]["console"]
-FILE: Dict[str, Any] = PKG_CONFIG["handlers"]["file"]
-EMAIL: Dict[str, Any] = PKG_CONFIG["handlers"]["email"]
+SERVER_BACKUP: dict[str, Any] = PKG_CONFIG["handlers"]["log_server_file_backup"]
+SERVER: dict[str, Any] = PKG_CONFIG["handlers"]["log_server"]
+CONSOLE: dict[str, Any] = PKG_CONFIG["handlers"]["console"]
+FILE: dict[str, Any] = PKG_CONFIG["handlers"]["file"]
+EMAIL: dict[str, Any] = PKG_CONFIG["handlers"]["email"]
 
-FORMAT: Dict[str, logging.Formatter] = {
+FORMAT: dict[str, logging.Formatter] = {
     k: logging.Formatter(**v) for k, v in PKG_CONFIG["formatters"].items()
 }
 
@@ -95,12 +97,12 @@ class ServerHandler(logging.handlers.SocketHandler):
 class EmailHandler(logging.handlers.SMTPHandler):
     def __init__(
         self,
-        toaddrs: Union[str, List[str]],
+        toaddrs: Union[str, list[str]],
         project_name: str = pathlib.Path.cwd().name,
-        mailhost: Union[str, Tuple[str, int]] = EMAIL["mailhost"],
+        mailhost: Union[str, tuple[str, int]] = EMAIL["mailhost"],
         fromaddr: str = EMAIL["fromaddr"],
         subject: str = EMAIL["subject"],
-        credentials: Optional[Tuple[str, str]] = EMAIL["credentials"],
+        credentials: Optional[tuple[str, str]] = EMAIL["credentials"],
         secure=EMAIL["secure"],
         timeout: float = EMAIL["timeout"],
         formatter: logging.Formatter = FORMAT[EMAIL["formatter"]],

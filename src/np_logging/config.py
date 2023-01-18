@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import logging
-from typing import Any, Dict
+from typing import Any
  
 try:
     import importlib.resources as importlib_resources 
@@ -24,7 +26,7 @@ except ConnectionError as exc:
     )
     config = np_config.from_file(LOCAL_PROJECT_CONFIG)
 finally:
-    PKG_CONFIG: Dict[str, Any] = config
+    PKG_CONFIG: dict[str, Any] = config
 
 try:
     config = np_config.from_zk(ZK_DEFAULT_LOGGING_CONFIG)
@@ -35,4 +37,4 @@ except ConnectionError as exc:
     )
     config = np_config.from_file(LOCAL_DEFAULT_LOGGING_CONFIG)
 finally:
-    DEFAULT_LOGGING_CONFIG: Dict[str, Any] = config
+    DEFAULT_LOGGING_CONFIG: dict[str, Any] = config
