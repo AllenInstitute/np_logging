@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import logging
 from typing import Any
- 
+
 try:
-    import importlib.resources as importlib_resources 
+    import importlib.resources as importlib_resources
 except ImportError:
     import importlib_resources
 import np_config
@@ -12,10 +12,12 @@ import np_config
 logger = logging.getLogger(__name__)
 
 ZK_DEFAULT_LOGGING_CONFIG = "/projects/np_logging/defaults/logging"
-LOCAL_DEFAULT_LOGGING_CONFIG = importlib_resources.files('np_logging') / "default_logging_config.yaml"
+LOCAL_DEFAULT_LOGGING_CONFIG = (
+    importlib_resources.files("np_logging") / "default_logging_config.yaml"
+)
 
 ZK_PROJECT_CONFIG = "/projects/np_logging/defaults/configuration"
-LOCAL_PROJECT_CONFIG = importlib_resources.files('np_logging') / "package_config.yaml"
+LOCAL_PROJECT_CONFIG = importlib_resources.files("np_logging") / "package_config.yaml"
 
 try:
     config = np_config.from_zk(ZK_PROJECT_CONFIG)

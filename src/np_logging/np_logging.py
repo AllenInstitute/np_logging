@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import atexit
+import contextlib
 import datetime
 import logging
 import logging.config
@@ -21,6 +22,8 @@ from .config import DEFAULT_LOGGING_CONFIG, PKG_CONFIG
 def getLogger(name: Optional[str] = None) -> logging.Logger:
     """`logging.getLogger` with console & debug/warning file handlers"""
     logger = logging.getLogger(name)
+    if logger.handlers:
+        return logger
     logger.addHandler(handlers.FileHandler(level=logging.WARNING))
     logger.addHandler(handlers.FileHandler(level=logging.DEBUG))
     logger.addHandler(handlers.ConsoleHandler(level=logging.DEBUG))
@@ -28,16 +31,21 @@ def getLogger(name: Optional[str] = None) -> logging.Logger:
     return logger
 
 
+get_logger = getLogger
+
+
 def web(project_name: str = pathlib.Path.cwd().name) -> logging.Logger:
     """
     Set up a socket handler to send logs to the eng-mindscope log server.
     """
-    logger = PKG_CONFIG.get("default_server_logger_name", 'web')
-    web = logging.getLogger(logger)
+    name = PKG_CONFIG.get("default_server_logger_name", "web")
+    logger = logging.getLogger(name)
+    if logger.handlers:
+        return logger
     handler = handlers.ServerHandler(project_name, level=logging.INFO)
-    web.addHandler(handler)
-    web.setLevel(logging.INFO)
-    return web
+    logger.addHandler(handler)
+    logger.setLevel(logging.INFO)
+    return logger
 
 
 def email(
@@ -49,13 +57,16 @@ def email(
     """
     Set up an email logger to send an email at program exit.
     """
-    logger = PKG_CONFIG.get("default_exit_email_logger_name", 'email')
-    utils.configure_email_logger(address, logger, subject)
+    name = PKG_CONFIG.get("default_exit_email_logger_name", "email")
+    logger = logging.getLogger(name)
+    utils.configure_email_logger(address, name, subject)
+    if logger.handlers:
+        return logger
     level = logging.ERROR if exception_only else logging.INFO
     utils.setup_logging_at_exit(
-        email_level=level, email_logger=logger, root_log_at_exit=propagate_to_root
+        email_level=level, email_logger=name, root_log_at_exit=propagate_to_root
     )
-    return logging.getLogger(logger)
+    return logger
 
 
 def setup(
@@ -68,17 +79,17 @@ def setup(
     """
     With no args, uses default config to set up loggers named `web` and `email`, plus console logging
     and info/debug file handlers on root logger.
-    
-    - `config` 
+
+    - `config`
         - a custom config dict for the logging module
         - input dict, or path to dict in json/yaml file, or path to dict on
           zookeeper [http://eng-mindscope:8081](http://eng-mindscope:8081)
-    
+
     - `project_name`
         - sets the `channel` value for the web logger
         - the web log can be viewed at [http://eng-mindscope:8080](http://eng-mindscope:8080)
 
-    - `email_address` 
+    - `email_address`
         - if one or more addresses are supplied, an email is sent at program exit reporting the
         elapsed time and cause of termination. If an exception was raised, the
         traceback is included.
@@ -104,8 +115,8 @@ def setup(
             removed_handlers,
         )
 
-    exit_email_logger = (
-        config.get("exit_email_logger", None) or PKG_CONFIG("default_exit_email_logger_name", 'email')
+    exit_email_logger = config.get("exit_email_logger", None) or PKG_CONFIG.get(
+        "default_exit_email_logger_name", "email"
     )
     if email_at_exit is True:
         email_at_exit = logging.INFO

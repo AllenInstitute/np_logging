@@ -20,6 +20,7 @@ from .config import PKG_CONFIG, DEFAULT_LOGGING_CONFIG
 
 START_TIME = datetime.datetime.now()
 
+
 def host_responsive(host: str) -> bool:
     """
     Remember that a host may not respond to a ping (ICMP) request even if the host name
@@ -28,6 +29,11 @@ def host_responsive(host: str) -> bool:
     param = "-n" if platform.system().lower() == "windows" else "-c"
     command = ["ping", param, "1", host]
     return subprocess.call(command, stdout=subprocess.PIPE) == 0
+
+
+def current_loggers() -> list[str]:
+    """Return the names of all loggers that have been created."""
+    return list(logging.root.manager.loggerDict) + [logging.getLogger().name]
 
 
 def ensure_accessible_handlers(config: dict) -> Union[None, list[str]]:

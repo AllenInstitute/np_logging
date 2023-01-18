@@ -87,7 +87,7 @@ class ServerHandler(logging.handlers.SocketHandler):
             with contextlib.suppress(FileNotFoundError):
                 backup = ServerBackupHandler()
         self.backup = backup
-            
+
     def emit(self, record):
         super().emit(record)
         with contextlib.suppress(Exception):
