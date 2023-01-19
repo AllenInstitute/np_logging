@@ -1,21 +1,12 @@
 from __future__ import annotations
 
-import atexit
-import contextlib
-import datetime
 import logging
 import logging.config
 import logging.handlers
-import os
 import pathlib
-import platform
-import subprocess
-import sys
-import threading
-from typing import Mapping, Optional, Sequence, Union
+from typing import Optional, Sequence, Union
 
-from . import handlers
-from . import utils
+from . import handlers, utils
 from .config import DEFAULT_LOGGING_CONFIG, PKG_CONFIG
 
 
