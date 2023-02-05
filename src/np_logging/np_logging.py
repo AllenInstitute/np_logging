@@ -9,16 +9,17 @@ from typing import Optional, Sequence, Union
 from . import handlers, utils
 from .config import DEFAULT_LOGGING_CONFIG, PKG_CONFIG
 
+logger = logging.getLogger(__name__)
 
 def getLogger(name: Optional[str] = None) -> logging.Logger:
-    """`logging.getLogger` with console & debug/warning file handlers"""
+    """`logging.getLogger`, with console & debug/warning file handlers if root logger"""
     logger = logging.getLogger(name)
-    if logger.handlers:
+    logger.setLevel(logging.INFO)
+    if (name and name != 'root') or logger.handlers: # logger.handlers not empty if already exists
         return logger
     logger.addHandler(handlers.FileHandler(level=logging.WARNING))
     logger.addHandler(handlers.FileHandler(level=logging.DEBUG))
     logger.addHandler(handlers.ConsoleHandler(level=logging.DEBUG))
-    logger.setLevel(logging.DEBUG)
     return logger
 
 
@@ -101,7 +102,7 @@ def setup(
     logging.config.dictConfig(config)
 
     if removed_handlers:
-        logging.debug(
+        logger.debug(
             "Removed handler(s) with inaccessible filepath or server: %s",
             removed_handlers,
         )
@@ -115,7 +116,7 @@ def setup(
         utils.configure_email_logger(
             logger_name=exit_email_logger, email_address=email_address
         )
-        logging.debug(
+        logger.debug(
             "Updated email address for logger %r to %s",
             exit_email_logger,
             email_address,
@@ -129,4 +130,4 @@ def setup(
         root_log_at_exit=log_at_exit,
     )
 
-    logging.debug("np_logging setup complete")
+    logger.debug("np_logging setup complete")

@@ -18,6 +18,8 @@ import np_config
 from . import handlers
 from .config import PKG_CONFIG, DEFAULT_LOGGING_CONFIG
 
+logger = logging.getLogger(__name__)
+
 START_TIME = datetime.datetime.now()
 
 
