@@ -2,10 +2,9 @@
 
 Quick start:
 ```python
-import logging
 import np_logging
 
-np_logging.setup()
+logger = np_logging.getLogger(__name__)
 ```
 
 `np_logging.setup()` with no arguments uses a default config, providing the loggers `web` and `email`, in addition to the default
