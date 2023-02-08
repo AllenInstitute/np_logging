@@ -12,18 +12,21 @@ from np_logging.config import DEFAULT_LOGGING_CONFIG, PKG_CONFIG
 
 logger = logging.getLogger(__name__)
 
+
 def getLogger(name: Optional[str] = None) -> logging.Logger:
     """`logging.getLogger`, with console & debug/warning file handlers if root logger"""
     logger = logging.getLogger(name)
-    if (name is None or name == 'root') and not logger.handlers:  # logger.handlers empty if logger didn't already exist
+    if (
+        name is None or name == "root"
+    ) and not logger.handlers:  # logger.handlers empty if logger didn't already exist
         logger.addHandler(handlers.FileHandler(level=logging.WARNING))
         logger.addHandler(handlers.FileHandler(level=logging.DEBUG))
         logger.addHandler(handlers.ConsoleHandler(level=logging.DEBUG))
         utils.setup_logging_at_exit()
-        logger.setLevel(PKG_CONFIG['default_logger_level'])
+        logger.setLevel(PKG_CONFIG["default_logger_level"])
     elif not logger.handlers:
         # not root, but we created a new logger
-        logger.setLevel(PKG_CONFIG['default_logger_level'])
+        logger.setLevel(PKG_CONFIG["default_logger_level"])
     return logger
 
 
@@ -40,7 +43,7 @@ def web(project_name: str = pathlib.Path.cwd().name) -> logging.Logger:
         return logger
     handler = handlers.ServerHandler(project_name)
     logger.addHandler(handler)
-    logger.setLevel(PKG_CONFIG['default_logger_level'])
+    logger.setLevel(PKG_CONFIG["default_logger_level"])
     return logger
 
 
@@ -133,5 +136,5 @@ def setup(
         email_logger=exit_email_logger,
         root_log_at_exit=log_at_exit,
     )
-    logger.setLevel(PKG_CONFIG['default_logger_level'])
+    logger.setLevel(PKG_CONFIG["default_logger_level"])
     logger.debug("np_logging setup complete")

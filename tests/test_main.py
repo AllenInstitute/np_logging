@@ -1,15 +1,17 @@
 import logging
 import logging.handlers
 import os
-import sys
 import pathlib
+import sys
 from typing import Dict, Optional, Union
 
 import np_config
 import pytest
+
 import np_logging
-from np_logging import utils, handlers
-from np_logging.config import PKG_CONFIG, DEFAULT_LOGGING_CONFIG
+from np_logging import handlers, utils
+from np_logging.config import DEFAULT_LOGGING_CONFIG, PKG_CONFIG
+
 
 def get_handler(
     logger: Union[str, logging.Logger], handler_cls: logging.Handler
@@ -35,8 +37,12 @@ def test_default_config():
 def test_setup_with_default_config():
     "Minimum expected from default setup: extra loggers and modified record factory."
     np_logging.setup()
-    assert has_handler(PKG_CONFIG["default_server_logger_name"], logging.handlers.SocketHandler)
-    assert has_handler(PKG_CONFIG["default_exit_email_logger_name"], logging.handlers.SMTPHandler)
+    assert has_handler(
+        PKG_CONFIG["default_server_logger_name"], logging.handlers.SocketHandler
+    )
+    assert has_handler(
+        PKG_CONFIG["default_exit_email_logger_name"], logging.handlers.SMTPHandler
+    )
     assert has_handler("root", logging.StreamHandler)
     assert has_handler("root", logging.FileHandler)
     log_record = logging.getLogRecordFactory()(
@@ -93,7 +99,10 @@ def test_web_standalone():
     web = np_logging.web()
     assert logging.getLogger(PKG_CONFIG["default_server_logger_name"]) is web
     assert has_handler(web, expected_handler)
-    assert get_handler(web, expected_handler).host == PKG_CONFIG["handlers"]["log_server"]["host"]
+    assert (
+        get_handler(web, expected_handler).host
+        == PKG_CONFIG["handlers"]["log_server"]["host"]
+    )
 
 
 def test_email_standalone():
@@ -104,6 +113,7 @@ def test_email_standalone():
     assert logging.getLogger(PKG_CONFIG["default_exit_email_logger_name"]) is email
     assert has_handler(email, expected_handler)
     assert get_handler(email, expected_handler).toaddrs == [address]
+
 
 def test_root_logger():
     logger = np_logging.get_logger()

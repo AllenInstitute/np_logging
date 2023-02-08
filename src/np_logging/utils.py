@@ -16,7 +16,7 @@ from typing import Any, Mapping, Sequence, Union
 import np_config
 
 import np_logging.handlers as handlers
-from np_logging.config import PKG_CONFIG, DEFAULT_LOGGING_CONFIG
+from np_logging.config import DEFAULT_LOGGING_CONFIG, PKG_CONFIG
 
 logger = logging.getLogger(__name__)
 
