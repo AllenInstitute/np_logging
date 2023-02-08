@@ -18,7 +18,7 @@ import platform
 import sys
 from typing import Any, Callable, Optional, Union
 
-from .config import PKG_CONFIG
+from np_logging.config import PKG_CONFIG
 
 SERVER_BACKUP: dict[str, Any] = PKG_CONFIG["handlers"]["log_server_file_backup"]
 SERVER: dict[str, Any] = PKG_CONFIG["handlers"]["log_server"]

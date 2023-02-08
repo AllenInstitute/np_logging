@@ -6,8 +6,9 @@ import logging.handlers
 import pathlib
 from typing import Optional, Sequence, Union
 
-from . import handlers, utils
-from .config import DEFAULT_LOGGING_CONFIG, PKG_CONFIG
+import np_logging.handlers as handlers
+import np_logging.utils as utils
+from np_logging.config import DEFAULT_LOGGING_CONFIG, PKG_CONFIG
 
 logger = logging.getLogger(__name__)
 
