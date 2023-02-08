@@ -121,7 +121,7 @@ def log_exception(exc_type, exc, tb):
 
 def log_exit(
     hooks: ExitHooks,
-    email_level: Union[bool, int],
+    email_level: Union[bool, int] = False,
     email_logger: str = PKG_CONFIG["default_exit_email_logger_name"],
     root_log_at_exit: bool = True,
 ):
