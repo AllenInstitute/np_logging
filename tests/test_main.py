@@ -9,7 +9,7 @@ import np_config
 import pytest
 import np_logging
 from np_logging import utils, handlers
-from np_logging.config import CONFIG
+from np_logging.config import PKG_CONFIG, DEFAULT_LOGGING_CONFIG
 
 def get_handler(
     logger: Union[str, logging.Logger], handler_cls: logging.Handler
@@ -29,14 +29,14 @@ def has_handler(
 
 
 def test_default_config():
-    assert np_logging.DEFAULT_LOGGING_CONFIG
+    assert DEFAULT_LOGGING_CONFIG
 
 
 def test_setup_with_default_config():
     "Minimum expected from default setup: extra loggers and modified record factory."
     np_logging.setup()
-    assert has_handler(CONFIG["default_server_logger_name"], logging.handlers.SocketHandler)
-    assert has_handler(CONFIG["default_exit_email_logger_name"], logging.handlers.SMTPHandler)
+    assert has_handler(PKG_CONFIG["default_server_logger_name"], logging.handlers.SocketHandler)
+    assert has_handler(PKG_CONFIG["default_exit_email_logger_name"], logging.handlers.SMTPHandler)
     assert has_handler("root", logging.StreamHandler)
     assert has_handler("root", logging.FileHandler)
     log_record = logging.getLogRecordFactory()(
@@ -91,9 +91,9 @@ def test_web_standalone():
     "Undocumented func - might be modified in future"
     expected_handler = logging.handlers.SocketHandler
     web = np_logging.web()
-    assert logging.getLogger(CONFIG["default_server_logger_name"]) is web
+    assert logging.getLogger(PKG_CONFIG["default_server_logger_name"]) is web
     assert has_handler(web, expected_handler)
-    assert get_handler(web, expected_handler).host == CONFIG["handlers"]["log_server"]["host"]
+    assert get_handler(web, expected_handler).host == PKG_CONFIG["handlers"]["log_server"]["host"]
 
 
 def test_email_standalone():
@@ -101,6 +101,11 @@ def test_email_standalone():
     expected_handler = logging.handlers.SMTPHandler
     address = "test@email.com"
     email = np_logging.email(address)
-    assert logging.getLogger(CONFIG["default_exit_email_logger_name"]) is email
+    assert logging.getLogger(PKG_CONFIG["default_exit_email_logger_name"]) is email
     assert has_handler(email, expected_handler)
     assert get_handler(email, expected_handler).toaddrs == [address]
+
+def test_root_logger():
+    logger = np_logging.get_logger()
+    assert logger is logging.getLogger("root")
+    print(logger.level)
