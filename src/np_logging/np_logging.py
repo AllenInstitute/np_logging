@@ -40,7 +40,7 @@ def web(project_name: str = pathlib.Path.cwd().name) -> logging.Logger:
         return logger
     handler = handlers.ServerHandler(project_name)
     logger.addHandler(handler)
-    logger.setLevel(logging.INFO)
+    logger.setLevel(PKG_CONFIG['default_logger_level'])
     return logger
 
 
@@ -133,5 +133,5 @@ def setup(
         email_logger=exit_email_logger,
         root_log_at_exit=log_at_exit,
     )
-
+    logger.setLevel(PKG_CONFIG['default_logger_level'])
     logger.debug("np_logging setup complete")
