@@ -1,5 +1,6 @@
 default_exit_email_logger_name: email
 default_server_logger_name: web
+default_logger_level: INFO
 formatters:
   simple:
     datefmt: "%H:%M"
@@ -30,7 +31,7 @@ handlers:
     class: logging.handlers.SocketHandler
     formatter: log_server
     host: eng-mindscope
-    level: INFO
+    level: NOTSET
     port: 9000
   console:
     class: logging.StreamHandler
