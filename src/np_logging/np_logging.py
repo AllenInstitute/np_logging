@@ -15,12 +15,15 @@ logger = logging.getLogger(__name__)
 def getLogger(name: Optional[str] = None) -> logging.Logger:
     """`logging.getLogger`, with console & debug/warning file handlers if root logger"""
     logger = logging.getLogger(name)
-    logger.setLevel(logging.INFO)
-    if (name and name != 'root') or logger.handlers: # logger.handlers not empty if already exists
-        return logger
-    logger.addHandler(handlers.FileHandler(level=logging.WARNING))
-    logger.addHandler(handlers.FileHandler(level=logging.DEBUG))
-    logger.addHandler(handlers.ConsoleHandler(level=logging.DEBUG))
+    if (name is None or name == 'root') and not logger.handlers:  # logger.handlers empty if logger didn't already exist
+        logger.addHandler(handlers.FileHandler(level=logging.WARNING))
+        logger.addHandler(handlers.FileHandler(level=logging.DEBUG))
+        logger.addHandler(handlers.ConsoleHandler(level=logging.DEBUG))
+        utils.setup_logging_at_exit()
+        logger.setLevel(PKG_CONFIG['default_logger_level'])
+    elif not logger.handlers:
+        # not root, but we created a new logger
+        logger.setLevel(PKG_CONFIG['default_logger_level'])
     return logger
 
 
