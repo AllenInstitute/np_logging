@@ -38,7 +38,7 @@ def web(project_name: str = pathlib.Path.cwd().name) -> logging.Logger:
     logger = logging.getLogger(name)
     if logger.handlers:
         return logger
-    handler = handlers.ServerHandler(project_name, level=logging.INFO)
+    handler = handlers.ServerHandler(project_name)
     logger.addHandler(handler)
     logger.setLevel(logging.INFO)
     return logger
