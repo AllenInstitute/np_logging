@@ -28,9 +28,10 @@ except ConnectionError as exc:
         LOCAL_PROJECT_CONFIG,
     )
     config = np_config.from_file(LOCAL_PROJECT_CONFIG)
-finally:
-    PKG_CONFIG: dict[str, Any] = config
+except Exception:
+    raise
 
+PKG_CONFIG: dict[str, Any] = config
 try:
     config = np_config.from_zk(ZK_DEFAULT_LOGGING_CONFIG)
 except ConnectionError as exc:
@@ -39,5 +40,7 @@ except ConnectionError as exc:
         LOCAL_DEFAULT_LOGGING_CONFIG,
     )
     config = np_config.from_file(LOCAL_DEFAULT_LOGGING_CONFIG)
-finally:
-    DEFAULT_LOGGING_CONFIG: dict[str, Any] = config
+except Exception:
+    raise
+
+DEFAULT_LOGGING_CONFIG: dict[str, Any] = config
