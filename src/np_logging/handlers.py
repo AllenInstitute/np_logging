@@ -18,7 +18,9 @@ import platform
 import sys
 from typing import Any, Callable, Optional, Union
 
-from np_logging.config import PKG_CONFIG
+import np_logging.config
+
+PKG_CONFIG = np_logging.config.PKG_CONFIG
 
 SERVER_BACKUP: dict[str, Any] = PKG_CONFIG["handlers"]["log_server_file_backup"]
 SERVER: dict[str, Any] = PKG_CONFIG["handlers"]["log_server"]
@@ -84,9 +86,9 @@ class ServerHandler(logging.handlers.SocketHandler):
         self.setFormatter(formatter)
         setup_record_factory(project_name)
         if backup is None:
-            with contextlib.suppress(FileNotFoundError):
+            with contextlib.suppress(Exception):
                 backup = ServerBackupHandler()
-        self.backup = backup
+                self.backup = backup
 
     def emit(self, record):
         super().emit(record)

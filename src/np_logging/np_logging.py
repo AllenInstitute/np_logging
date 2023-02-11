@@ -8,7 +8,9 @@ from typing import Optional, Sequence, Union
 
 import np_logging.handlers as handlers
 import np_logging.utils as utils
-from np_logging.config import DEFAULT_LOGGING_CONFIG, PKG_CONFIG
+import np_logging.config as config
+
+DEFAULT_LOGGING_CONFIG, PKG_CONFIG = config.DEFAULT_LOGGING_CONFIG, config.PKG_CONFIG
 
 logger = logging.getLogger(__name__)
 
