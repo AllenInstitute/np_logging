@@ -9,7 +9,6 @@ authors = [
 ]
 maintainers = ["Ben Hardcastle <ben.hardcastle@alleninstitute.org>"]
 readme = "README.md"
-include = ["configs/*"]
 packages = [{include = "np_logging", from = "src"}]
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -23,24 +22,15 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.7"
-np_config = "*"
+np_config = ">0.4.12"
 importlib_resources = ">1.4"
-pip-tools = {version = "*", optional = true}
-isort = {version = "*", optional = true}
-mypy = {version = "*", optional = true}
-black = {version = "*", optional = true}
-pytest = {version = "*", optional = true}
-poetry = {version = "*", optional = true}
 
-[tool.poetry.extras]
-dev = [
-    "pip-tools", # convert pyproject.toml to requirements.txt
-    "isort", # sort imports
-    "mypy",
-    "black",
-    "pytest",
-    "poetry",
-]
+[tool.poetry.group.dev.dependencies]
+pip-tools = "*"
+isort = "*"
+mypy = "*"
+black = "*"
+pytest = "*"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
