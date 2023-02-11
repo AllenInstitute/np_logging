@@ -116,6 +116,5 @@ def test_email_standalone():
 
 
 def test_root_logger():
-    logger = np_logging.get_logger()
-    assert logger is logging.getLogger("root")
-    print(logger.level)
+    assert np_logging.getLogger() is logging.getLogger("root")
+    
