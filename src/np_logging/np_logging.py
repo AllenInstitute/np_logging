@@ -61,9 +61,9 @@ def email(
     """
     name = PKG_CONFIG.get("default_exit_email_logger_name", "email")
     logger = logging.getLogger(name)
-    utils.configure_email_logger(address, name, subject)
-    if logger.handlers:
+    if logger.handlers: # we already created it
         return logger
+    utils.configure_email_logger(address, name, subject)
     level = logging.ERROR if exception_only else logging.INFO
     utils.setup_logging_at_exit(
         email_level=level, email_logger=name, root_log_at_exit=propagate_to_root
