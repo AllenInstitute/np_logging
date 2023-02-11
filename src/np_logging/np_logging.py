@@ -27,8 +27,9 @@ def getLogger(name: Optional[str] = None) -> logging.Logger:
         utils.setup_logging_at_exit()
         logger.setLevel(PKG_CONFIG["default_logger_level"])
     elif not logger.handlers:
-        # not root, but we created a new logger
-        logger.setLevel(PKG_CONFIG["default_logger_level"])
+        # we created a new logger
+        # make sure all logs are propagated to root:
+        logger.setLevel(logging.NOTSET)
     return logger
 
 
