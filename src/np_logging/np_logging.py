@@ -13,7 +13,7 @@ import np_logging.config as config
 DEFAULT_LOGGING_CONFIG, PKG_CONFIG = config.DEFAULT_LOGGING_CONFIG, config.PKG_CONFIG
 
 logger = logging.getLogger(__name__)
-
+logger.setLevel(logging.NOTSET)
 
 def getLogger(name: Optional[str] = None) -> logging.Logger:
     """`logging.getLogger`, with console & debug/warning file handlers if root logger"""
