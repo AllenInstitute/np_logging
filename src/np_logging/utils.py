@@ -174,7 +174,7 @@ def configure_email_logger(
     else:
         email_logger.addHandler(
             handlers.EmailHandler(
-                list(email_address), level=logging.INFO, subject=email_subject
+                email_address, level=logging.INFO, subject=email_subject
             )
         )
 
