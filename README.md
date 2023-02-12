@@ -1,4 +1,4 @@
-# **np_logging**
+# np_logging
 
 **For use on internal Allen Institute network**
 
