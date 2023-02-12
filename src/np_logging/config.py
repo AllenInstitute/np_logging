@@ -3,10 +3,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-try:
-    import importlib.resources as importlib_resources
-except ImportError:
-    import importlib_resources
+import importlib_resources
 import np_config
 
 logger = logging.getLogger(__name__)
