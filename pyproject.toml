@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "np_logging"
+name = "np-logging"
 version = "0.3.8"
 description = "Pre-configured file, web, and email logging for Mindscope neuropixels projects, repackaging code from AIBS mpeconfig."
 authors = [
@@ -9,12 +9,12 @@ authors = [
 ]
 maintainers = ["Ben Hardcastle <ben.hardcastle@alleninstitute.org>"]
 readme = "README.md"
-packages = [{include = "np_logging", from = "src"}]
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
+packages = [{include = "np_logging", from = "src"}]
 
 [tool.poetry.urls]
 "Repository" = "https://github.com/alleninstitute/np_logging"
