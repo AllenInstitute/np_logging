@@ -1,8 +1,7 @@
 # np_logging
 
-**For use on internal Allen Institute network**
+### *For use on internal Allen Institute network*
 
-***
 
 
 ## Quick start
