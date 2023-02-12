@@ -9,7 +9,9 @@
 
 ## Quick start
 
-In a script or main file, add console & file handlers, plus exit messages, to the root logger:
+Follow the conventions for using the `logging` module in the standard library:
+
+ - in a script or main module, `np_logging` adds console & file handlers and exit messages to the root logger:
 
 ```python
 import np_logging
@@ -18,19 +20,21 @@ logger = np_logging.getLogger()
 ```
 
 
-In a package with multiple modules:
+ - or, in a package or project with multiple modules, all logged messages are propagated to the root logger:
 ```python
 import np_logging
 
-logger = np_logging.getLogger(__name__)
+logger = np_logging.getLogger(__name__)     # logger.level = logging.NOTSET = 0
 ```
 
-...then log messages as usual:
+
+ - then log messages as usual:
 
 ```python 
 logger.info('test message')
 logger.warning('test message')
 ```
+
 
 No further setup is required, and importing `logging`
 from the standard library isn't necessary.
