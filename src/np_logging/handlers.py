@@ -151,3 +151,7 @@ class FileHandler(logging.handlers.RotatingFileHandler):
         super().__init__(filename, mode, maxBytes, backupCount, encoding, delay)
         self.setLevel(level)
         self.setFormatter(formatter)
+
+    def emit(self, record):
+        with contextlib.suppress(Exception):
+            super().emit(record)

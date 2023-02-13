@@ -42,6 +42,8 @@ build-backend = "poetry.core.masonry.api"
 addopts = [
     "--import-mode=importlib",
     "--doctest-modules",
+    # "--pdb",
+    # "--pdbcls=IPython.terminal.debugger:TerminalPdb",
 ]
 
 doctest_optionflags = [
