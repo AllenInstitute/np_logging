@@ -3,7 +3,7 @@ import logging.handlers
 import os
 import pathlib
 import sys
-from typing import Dict, Optional, Union
+from typing import Optional
 
 import np_config
 import pytest
@@ -14,7 +14,7 @@ from np_logging.config import DEFAULT_LOGGING_CONFIG, PKG_CONFIG
 
 
 def get_handler(
-    logger: Union[str, logging.Logger], handler_cls: logging.Handler
+    logger: str | logging.Logger, handler_cls: logging.Handler
 ) -> Optional[logging.Handler]:
     if isinstance(logger, str):
         logger = logging.getLogger(logger)
@@ -25,7 +25,7 @@ def get_handler(
 
 
 def has_handler(
-    logger: Union[str, logging.Logger], handler_cls: logging.Handler
+    logger: str | logging.Logger, handler_cls: logging.Handler
 ) -> bool:
     return bool(get_handler(logger, handler_cls))
 
@@ -55,7 +55,7 @@ def test_setup_with_default_config():
 
 
 @pytest.fixture
-def custom_handler_config() -> Dict:
+def custom_handler_config() -> dict:
     return np_config.from_file(
         (pathlib.Path(__file__).parent / "custom_handler_config.yaml").resolve()
     )

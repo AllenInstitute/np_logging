@@ -4,7 +4,7 @@ import logging
 import logging.config
 import logging.handlers
 import pathlib
-from typing import Optional, Sequence, Union
+from typing import Optional, Sequence
 
 import np_logging.handlers as handlers
 import np_logging.utils as utils
@@ -51,7 +51,7 @@ def web(project_name: str = pathlib.Path.cwd().name) -> logging.Logger:
 
 
 def email(
-    address: Union[str, Sequence[str]],
+    address: str | Sequence[str],
     subject: str = __name__,
     exception_only: bool = False,
     propagate_to_root: bool = True,
@@ -72,10 +72,10 @@ def email(
 
 
 def setup(
-    config: Union[str, dict, pathlib.Path] = DEFAULT_LOGGING_CONFIG,
+    config: str | dict | pathlib.Path = DEFAULT_LOGGING_CONFIG,
     project_name: str = pathlib.Path.cwd().name,  # for log server
-    email_address: Optional[Union[str, Sequence[str]]] = None,
-    email_at_exit: Union[bool, int] = False,  # auto-True if address arg provided
+    email_address: Optional[str | Sequence[str]] = None,
+    email_at_exit: bool | int = False,  # auto-True if address arg provided
     log_at_exit: bool = True,
 ):
     """

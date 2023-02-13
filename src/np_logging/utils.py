@@ -11,7 +11,7 @@ import platform
 import subprocess
 import sys
 import threading
-from typing import Any, Mapping, Sequence, Union
+from typing import Any, Mapping, Sequence
 
 import np_config
 
@@ -38,7 +38,7 @@ def current_loggers() -> list[str]:
     return list(logging.root.manager.loggerDict) + [logging.getLogger().name]
 
 
-def ensure_accessible_handlers(config: dict) -> Union[None, list[str]]:
+def ensure_accessible_handlers(config: dict) -> None | list[str]:
     """
     Check filepaths and write access for file handlers; server availability for socket/smtp handlers.
     Remove inaccessible handlers from config and return their names.
@@ -121,7 +121,7 @@ def log_exception(exc_type, exc, tb):
 
 def log_exit(
     hooks: ExitHooks,
-    email_level: Union[bool, int] = False,
+    email_level: bool | int = False,
     email_logger: str = PKG_CONFIG["default_exit_email_logger_name"],
     root_log_at_exit: bool = True,
 ):
@@ -158,7 +158,7 @@ def setup_logging_at_exit(*args, **kwargs):
 
 
 def configure_email_logger(
-    email_address: Union[str, Sequence[str]],
+    email_address: str | Sequence[str],
     logger_name: str = PKG_CONFIG["default_exit_email_logger_name"],
     email_subject: str = __name__,
 ):
@@ -180,7 +180,7 @@ def configure_email_logger(
 
 
 def get_config_dict_from_multi_input(
-    arg: Union[str, Mapping, pathlib.Path]
+    arg: str | Mapping | pathlib.Path
 ) -> dict[str, Any]:
     "Differentiate a file path from a ZK path and return corresponding logging config dict, if valid."
 

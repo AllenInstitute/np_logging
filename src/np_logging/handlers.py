@@ -16,7 +16,7 @@ import os
 import pathlib
 import platform
 import sys
-from typing import Any, Callable, Optional, Union
+from typing import Any, Callable, Optional
 
 import np_logging.config
 
@@ -99,9 +99,9 @@ class ServerHandler(logging.handlers.SocketHandler):
 class EmailHandler(logging.handlers.SMTPHandler):
     def __init__(
         self,
-        toaddrs: Union[str, list[str]],
+        toaddrs: str | list[str],
         project_name: str = pathlib.Path.cwd().name,
-        mailhost: Union[str, tuple[str, int]] = EMAIL["mailhost"],
+        mailhost: str | tuple[str, int] = EMAIL["mailhost"],
         fromaddr: str = EMAIL["fromaddr"],
         subject: str = EMAIL["subject"],
         credentials: Optional[tuple[str, str]] = EMAIL["credentials"],
@@ -135,7 +135,7 @@ class ConsoleHandler(logging.StreamHandler):
 class FileHandler(logging.handlers.RotatingFileHandler):
     def __init__(
         self,
-        logs_dir: Union[str, pathlib.Path] = FILE["logs_dir"],
+        logs_dir: str | pathlib.Path = FILE["logs_dir"],
         mode: str = FILE["mode"],
         maxBytes: int = FILE["maxBytes"],
         backupCount: int = FILE["backupCount"],
