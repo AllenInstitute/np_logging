@@ -31,6 +31,8 @@ isort = "*"
 mypy = "*"
 black = "*"
 pytest = "*"
+coverage = {extras = ["toml"], version = "^7.1.0"}
+pytest-cov = "^4.0.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -52,3 +54,13 @@ testpaths = [
     "tests",
     "src",
 ]
+
+[tool.coverage.paths]
+source = ["src"]
+
+[tool.coverage.run]
+branch = true
+source = ["np_logging"]
+
+[tool.coverage.report]
+show_missing = true
