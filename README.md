@@ -54,9 +54,8 @@ np_logging.web(project_name).info('test message')
 ***
 
 
-For customization, use `np_logging.setup()` to supply a logging config dict than specifies
-loggers and their handlers/formatters, and extra functions such as exit messages & exit
-emails will be added.
+For customization, use `np_logging.setup()` to supply a logging config dict that specifies
+loggers and their handlers & formatters, and np_logging will add extra functionality such as exit messages/emails.
 
 - logging configs should be specified according to the python logging [library dict schema](https://docs.python.org/3/library/logging.config.html#logging-config-dictschema)
 
