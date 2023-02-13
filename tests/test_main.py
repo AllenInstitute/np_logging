@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 import logging.handlers
 import os
@@ -15,9 +17,12 @@ from np_logging.config import DEFAULT_LOGGING_CONFIG, PKG_CONFIG
 
 def get_handler(
     logger: str | logging.Logger, handler_cls: logging.Handler
-) -> Optional[logging.Handler]:
+) -> logging.Handler | None:
     if isinstance(logger, str):
-        logger = logging.getLogger(logger)
+        if logger == "root":
+            logger = logging.getLogger() # before 3.9, getLogger('root') doesn't return the actual rootlogger
+        else:
+            logger = logging.getLogger(logger)
     try:
         return next(h for h in logger.handlers if isinstance(h, handler_cls))
     except StopIteration:
@@ -43,8 +48,8 @@ def test_setup_with_default_config():
     assert has_handler(
         PKG_CONFIG["default_exit_email_logger_name"], logging.handlers.SMTPHandler
     )
-    assert has_handler("root", logging.StreamHandler)
-    assert has_handler("root", logging.FileHandler)
+    assert has_handler(logging.getLogger(), logging.StreamHandler)
+    assert has_handler(logging.getLogger(), logging.FileHandler)
     log_record = logging.getLogRecordFactory()(
         name=None, level=0, pathname="", lineno=0, msg="", args=(), exc_info=None
     )
@@ -52,7 +57,6 @@ def test_setup_with_default_config():
         hasattr(log_record, attr)
         for attr in ("project", "rig_name", "comp_id", "version")
     )
-
 
 @pytest.fixture
 def custom_handler_config() -> dict:
@@ -116,5 +120,6 @@ def test_email_standalone():
 
 
 def test_root_logger():
-    assert np_logging.getLogger() is logging.getLogger("root")
+    assert np_logging.getLogger() is logging.getLogger()
     
+test_root_logger()
