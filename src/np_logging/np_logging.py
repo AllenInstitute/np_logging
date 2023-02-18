@@ -12,8 +12,8 @@ import np_logging.config as config
 
 DEFAULT_LOGGING_CONFIG, PKG_CONFIG = config.DEFAULT_LOGGING_CONFIG, config.PKG_CONFIG
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.NOTSET)
+pkg_logger = logging.getLogger(__name__)
+pkg_logger.setLevel(logging.NOTSET)
 
 def getLogger(name: Optional[str] = None) -> logging.Logger:
     """`logging.getLogger`, with console & debug/warning file handlers if root logger. 
@@ -124,7 +124,7 @@ def setup(
     logging.config.dictConfig(config)
 
     if removed_handlers:
-        logger.debug(
+        pkg_logger.debug(
             "Removed handler(s) with inaccessible filepath or server: %s",
             removed_handlers,
         )
@@ -138,7 +138,7 @@ def setup(
         utils.configure_email_logger(
             logger_name=exit_email_logger, email_address=email_address
         )
-        logger.debug(
+        pkg_logger.debug(
             "Updated email address for logger %r to %s",
             exit_email_logger,
             email_address,
@@ -151,5 +151,5 @@ def setup(
         email_logger=exit_email_logger,
         root_log_at_exit=log_at_exit,
     )
-    logger.setLevel(PKG_CONFIG["default_logger_level"])
-    logger.debug("np_logging setup complete")
+    logging.getLogger('root').setLevel(PKG_CONFIG["default_logger_level"])
+    pkg_logger.debug("np_logging setup complete")
