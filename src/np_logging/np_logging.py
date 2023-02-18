@@ -16,14 +16,26 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.NOTSET)
 
 def getLogger(name: Optional[str] = None) -> logging.Logger:
-    """`logging.getLogger`, with console & debug/warning file handlers if root logger"""
+    """`logging.getLogger`, with console & debug/warning file handlers if root logger. 
+    
+    Note that the logger level determines whether msgs are passed to handlers. If the
+    logger created here has a level higher than DEBUG, then the debug file handler won't
+    log anything. To toggle display of debug msgs you likely want to set the level of
+    the console handler instead, e.g.:
+    >>> name = "root" # or None
+    >>> console = [_ for _ in logging.getLogger(name).handlers if _.name == "console"][0]
+    >>> console.setLevel(logging.DEBUG)
+    >>> console.setLevel(logging.INFO)
+    """
     logger = logging.getLogger(name)
     if (
         name is None or name == "root"
     ) and not logger.handlers:  # logger.handlers empty if logger didn't already exist
         logger.addHandler(handlers.FileHandler(level=logging.WARNING))
         logger.addHandler(handlers.FileHandler(level=logging.DEBUG))
-        logger.addHandler(handlers.ConsoleHandler(level=logging.DEBUG))
+        console = handlers.ConsoleHandler(level=logging.INFO)
+        console.name = "console" # we'll generally want to modify the level of this handler, so make it slightly easier to grab
+        logger.addHandler(console)
         utils.setup_logging_at_exit()
         logger.setLevel(PKG_CONFIG["default_logger_level"])
     elif not logger.handlers:
