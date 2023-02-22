@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+import contextlib
 import logging
 import logging.config
 import logging.handlers
 import pathlib
-from typing import Optional, Sequence
+from typing import Generator, Optional, Sequence
 
 import np_logging.handlers as handlers
 import np_logging.utils as utils
@@ -153,3 +154,31 @@ def setup(
     )
     logging.getLogger('root').setLevel(PKG_CONFIG["default_logger_level"])
     pkg_logger.debug("np_logging setup complete")
+
+
+@contextlib.contextmanager
+def debug() -> Generator[None, None, None]:
+    """Context manager to temporarily set root logger and any of its StreamHandlers to
+    DEBUG level.
+    
+    Restores original levels on exit.
+    """
+    root_logger = getLogger("root")
+    
+    logger_level_0 = root_logger.level
+    handler_level_0 = []
+    
+    root_logger.setLevel(logging.DEBUG)
+    for handler in (_ for _ in root_logger.handlers if isinstance(_, logging.StreamHandler)):
+        handler_level_0 += [handler.level]
+        handler.setLevel(logging.DEBUG)
+        
+    try:
+        yield
+    finally:
+        root_logger.setLevel(logger_level_0)
+        for handler, level in zip(
+            (_ for _ in root_logger.handlers if isinstance(_, logging.StreamHandler)),
+            handler_level_0,
+        ):
+            handler.setLevel(level)
