@@ -7,7 +7,7 @@ import importlib_resources
 import np_config
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.NOTSET)
+logger.setLevel(logging.DEBUG)
 
 ZK_DEFAULT_LOGGING_CONFIG = "/projects/np_logging/defaults/logging"
 LOCAL_DEFAULT_LOGGING_CONFIG = (

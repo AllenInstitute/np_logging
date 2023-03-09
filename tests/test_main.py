@@ -89,6 +89,17 @@ def test_custom_handlers(custom_handler_config):
                 )
 
 
+def test_set_level():
+    root = np_logging.getLogger()
+    root_level_0 = root.level
+    console = next((_ for _ in root.handlers if _.name == 'console'), None)
+    assert console is not None
+    for level in (10, 20, 30, 40, 50):
+        np_logging.setLevel(level)
+        assert console.level == level
+        assert root.level == root_level_0
+
+
 def test_email_server():
     assert utils.host_responsive(handlers.EmailHandler("test@email.com").mailhost)
 
@@ -100,7 +111,7 @@ def test_log_server():
 def test_web_standalone():
     "Undocumented func - might be modified in future"
     expected_handler = logging.handlers.SocketHandler
-    web = np_logging.web()
+    web = np_logging.web('test')
     assert logging.getLogger(PKG_CONFIG["default_server_logger_name"]) is web
     assert has_handler(web, expected_handler)
     assert (
@@ -123,3 +134,5 @@ def test_root_logger():
     assert np_logging.getLogger() is logging.getLogger()
     
 test_root_logger()
+
+test_web_standalone()

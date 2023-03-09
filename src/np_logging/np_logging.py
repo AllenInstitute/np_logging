@@ -5,7 +5,7 @@ import logging
 import logging.config
 import logging.handlers
 import pathlib
-from typing import Generator, Optional, Sequence
+from typing import Callable, Generator, Optional, Sequence
 
 import np_logging.handlers as handlers
 import np_logging.utils as utils
@@ -16,37 +16,68 @@ DEFAULT_LOGGING_CONFIG, PKG_CONFIG = config.DEFAULT_LOGGING_CONFIG, config.PKG_C
 pkg_logger = logging.getLogger(__name__)
 pkg_logger.setLevel(logging.NOTSET)
 
-def getLogger(name: Optional[str] = None) -> logging.Logger:
-    """`logging.getLogger`, with console & debug/warning file handlers if root logger. 
-    
+console: None | handlers.ConsoleHandler = None
+"""The console handler added to the root logger by `getLogger`."""
+
+
+def getLogger(name: Optional[str] = None, level: int | str = "INFO") -> logging.Logger:
+    """`logging.getLogger`, with console & debug/warning file handlers if root logger.
+
+    An additional level argument sets the level of the newly-created console handler.
+
     Note that the logger level determines whether msgs are passed to handlers. If the
-    logger created here has a level higher than DEBUG, then the debug file handler won't
-    log anything. To toggle display of debug msgs you likely want to set the level of
-    the console handler instead, e.g.:
-    >>> name = "root" # or None
-    >>> console = [_ for _ in logging.getLogger(name).handlers if _.name == "console"][0]
-    >>> console.setLevel(logging.DEBUG)
-    >>> console.setLevel(logging.INFO)
+    root logger has a level higher than DEBUG, then the debug file handler won't
+    log anything, so generally we want to leave the root logger level at DEBUG and
+    modify the level of the console handler instead.
+
+    `np_logging.setLevel(str | int)` also sets the console handler level directly.
     """
+
     logger = logging.getLogger(name)
-    if (
-        name is None or name == "root"
-    ) and not logger.handlers:  # logger.handlers empty if logger didn't already exist
+
+    if name is None or name == "root":
+        global console
+        if console is not None:  # already added our handlers to root
+            return logger
+
+        console = handlers.ConsoleHandler(level=level)
+        console.name = "console"
+        logger.addHandler(console)
         logger.addHandler(handlers.FileHandler(level=logging.WARNING))
         logger.addHandler(handlers.FileHandler(level=logging.DEBUG))
-        console = handlers.ConsoleHandler(level=logging.INFO)
-        console.name = "console" # we'll generally want to modify the level of this handler, so make it slightly easier to grab
-        logger.addHandler(console)
+
         utils.setup_logging_at_exit()
+
         logger.setLevel(PKG_CONFIG["default_logger_level"])
+        # note that setting the root logger level to NOTSET here can result in unpredictable behavior:
+        # the logging module seems to step in and set to WARNING
     elif not logger.handlers:
-        # we created a new logger
+        # we created a new module logger -
         # make sure all logs are propagated to root:
-        logger.setLevel(logging.NOTSET)
+        logger.setLevel(logging.DEBUG)
     return logger
 
 
-get_logger = getLogger
+get_logger: Callable[[str | None], logging.Logger] = getLogger
+
+
+def setLevel(level: int | str) -> None:
+    """Set the level of the `np_logging`-created console handler on the root logger.
+    
+    If root logger doesn't exist, it will be created first.
+    
+    Leaving the root logger level at DEBUG allows the debug file handler to continue logging.
+    """
+    root = getLogger()
+    if console is None:
+        pkg_logger.warning(
+            "Internal error: `np_logging.console` handler should have been created, but wasn't. Root handlers: %s", root.handlers
+            )
+        return
+    console.setLevel(level)
+
+   
+set_level: Callable[[int | str], None] = setLevel
 
 
 def web(project_name: str = pathlib.Path.cwd().name) -> logging.Logger:
